@@ -3,8 +3,9 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const locales = {
   'es': es,
@@ -43,8 +44,7 @@ const consultingRooms: ConsultingRoom[] = [
 const ConsultingRoomCalendar = () => {
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
   const [showReservationDialog, setShowReservationDialog] = useState(false);
-
-  // Ejemplo de reservas (esto se conectará con Supabase más adelante)
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
   const handleSelectSlot = (slotInfo: any) => {
@@ -68,23 +68,45 @@ const ConsultingRoomCalendar = () => {
     setShowReservationDialog(false);
   };
 
+  const filteredReservations = selectedRoom
+    ? reservations.filter(res => res.consultingRoom === parseInt(selectedRoom))
+    : reservations;
+
   return (
-    <div className="h-[800px] p-4">
-      <Calendar
-        localizer={localizer}
-        events={reservations}
-        step={60}
-        views={['day', 'work_week']}
-        defaultView={Views.DAY}
-        resources={consultingRooms}
-        resourceIdAccessor="id"
-        resourceTitleAccessor="title"
-        selectable
-        onSelectSlot={handleSelectSlot}
-        min={new Date(2024, 1, 1, 8, 0, 0)}
-        max={new Date(2024, 1, 1, 20, 0, 0)}
-        className="rounded-lg shadow-lg bg-white"
-      />
+    <div className="space-y-4">
+      <div className="w-full max-w-xs">
+        <Select
+          value={selectedRoom || undefined}
+          onValueChange={(value) => setSelectedRoom(value)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccionar consultorio" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos los consultorios</SelectItem>
+            {consultingRooms.map((room) => (
+              <SelectItem key={room.id} value={room.id.toString()}>
+                {room.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="h-[800px]">
+        <Calendar
+          localizer={localizer}
+          events={filteredReservations}
+          step={60}
+          views={['day', 'work_week']}
+          defaultView={Views.WORK_WEEK}
+          selectable
+          onSelectSlot={handleSelectSlot}
+          min={new Date(2024, 1, 1, 8, 0, 0)}
+          max={new Date(2024, 1, 1, 20, 0, 0)}
+          className="rounded-lg shadow-lg bg-white"
+        />
+      </div>
 
       <Dialog open={showReservationDialog} onOpenChange={setShowReservationDialog}>
         <DialogContent>
