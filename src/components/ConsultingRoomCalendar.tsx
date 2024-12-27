@@ -68,7 +68,7 @@ const ConsultingRoomCalendar = () => {
     setShowReservationDialog(false);
   };
 
-  const filteredReservations = selectedRoom
+  const filteredReservations = selectedRoom && selectedRoom !== 'all'
     ? reservations.filter(res => res.consultingRoom === parseInt(selectedRoom))
     : reservations;
 
@@ -76,14 +76,14 @@ const ConsultingRoomCalendar = () => {
     <div className="space-y-4">
       <div className="w-full max-w-xs">
         <Select
-          value={selectedRoom || undefined}
+          value={selectedRoom || 'all'}
           onValueChange={(value) => setSelectedRoom(value)}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar consultorio" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los consultorios</SelectItem>
+            <SelectItem value="all">Todos los consultorios</SelectItem>
             {consultingRooms.map((room) => (
               <SelectItem key={room.id} value={room.id.toString()}>
                 {room.title}
