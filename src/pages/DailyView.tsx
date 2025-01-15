@@ -87,6 +87,7 @@ const DailyView = () => {
           localizer={localizer}
           events={events}
           step={60}
+          timeslots={1}
           views={['day']}
           defaultView={Views.DAY}
           resources={resources}
@@ -94,8 +95,8 @@ const DailyView = () => {
           resourceTitleAccessor="title"
           selectable
           onSelectSlot={handleSelectSlot}
-          min={new Date(2024, 1, 1, 8, 0, 0)}
-          max={new Date(2024, 1, 1, 20, 0, 0)}
+          min={new Date(2024, 1, 1, 7, 0, 0)}
+          max={new Date(2024, 1, 1, 22, 0, 0)}
           defaultDate={new Date()}
         />
       </div>
