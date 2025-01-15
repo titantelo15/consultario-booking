@@ -5,6 +5,9 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const locales = {
   'es': es,
@@ -29,6 +32,8 @@ interface Event {
   start: Date;
   end: Date;
   resourceId: number;
+  profesionalName: string;
+  frequency: 'eventual' | 'quincenal' | 'semanal';
 }
 
 const resources: Resource[] = [
@@ -43,6 +48,8 @@ const DailyView = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [showReservationDialog, setShowReservationDialog] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [profesionalName, setProfesionalName] = useState('');
+  const [frequency, setFrequency] = useState<'eventual' | 'quincenal' | 'semanal'>('eventual');
 
   const handleSelectSlot = (slotInfo: any) => {
     console.log('Selected slot:', slotInfo);
@@ -51,18 +58,22 @@ const DailyView = () => {
   };
 
   const handleCreateReservation = () => {
-    if (!selectedSlot) return;
+    if (!selectedSlot || !profesionalName) return;
 
     const newEvent: Event = {
       id: Math.random().toString(),
-      title: 'Nueva Reserva',
+      title: `Reserva - ${profesionalName}`,
       start: selectedSlot.start,
       end: selectedSlot.end,
       resourceId: selectedSlot.resourceId,
+      profesionalName,
+      frequency,
     };
 
     setEvents([...events, newEvent]);
     setShowReservationDialog(false);
+    setProfesionalName('');
+    setFrequency('eventual');
   };
 
   return (
@@ -94,17 +105,49 @@ const DailyView = () => {
           <DialogHeader>
             <DialogTitle>Nueva Reserva</DialogTitle>
           </DialogHeader>
-          <div className="p-4">
-            <p className="mb-4">
-              ¿Desea reservar el consultorio {selectedSlot?.resourceId} desde{' '}
+          <div className="p-4 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="profesionalName">Nombre del Profesional</Label>
+              <Input
+                id="profesionalName"
+                value={profesionalName}
+                onChange={(e) => setProfesionalName(e.target.value)}
+                placeholder="Ingrese el nombre del profesional"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Frecuencia de la Reserva</Label>
+              <RadioGroup value={frequency} onValueChange={(value: 'eventual' | 'quincenal' | 'semanal') => setFrequency(value)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="eventual" id="eventual" />
+                  <Label htmlFor="eventual">Eventual</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="quincenal" id="quincenal" />
+                  <Label htmlFor="quincenal">Quincenal</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="semanal" id="semanal" />
+                  <Label htmlFor="semanal">Semanal</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <p className="text-sm text-gray-600">
+              Consultorio {selectedSlot?.resourceId} - Horario:{' '}
               {selectedSlot?.start && format(selectedSlot.start, 'HH:mm')} hasta{' '}
-              {selectedSlot?.end && format(selectedSlot.end, 'HH:mm')}?
+              {selectedSlot?.end && format(selectedSlot.end, 'HH:mm')}
             </p>
+
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowReservationDialog(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCreateReservation}>
+              <Button 
+                onClick={handleCreateReservation}
+                disabled={!profesionalName}
+              >
                 Confirmar Reserva
               </Button>
             </div>
