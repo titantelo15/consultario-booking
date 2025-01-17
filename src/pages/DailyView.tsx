@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Plus } from 'lucide-react';
 
 const locales = {
   'es': es,
@@ -36,6 +37,12 @@ interface Event {
   frequency: 'eventual' | 'quincenal' | 'semanal';
 }
 
+interface SelectedSlot {
+  start: Date;
+  end: Date;
+  resourceId: number;
+}
+
 const resources: Resource[] = [
   { id: 1, title: 'Consultorio 1' },
   { id: 2, title: 'Consultorio 2' },
@@ -47,14 +54,28 @@ const resources: Resource[] = [
 const DailyView = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [showReservationDialog, setShowReservationDialog] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
   const [profesionalName, setProfesionalName] = useState('');
   const [frequency, setFrequency] = useState<'eventual' | 'quincenal' | 'semanal'>('eventual');
 
   const handleSelectSlot = (slotInfo: any) => {
     console.log('Selected slot:', slotInfo);
-    setSelectedSlot(slotInfo);
-    setShowReservationDialog(true);
+    
+    // Si ya hay un slot seleccionado y es el mismo, abrimos el modal
+    if (selectedSlot && 
+        selectedSlot.start.getTime() === slotInfo.start.getTime() &&
+        selectedSlot.end.getTime() === slotInfo.end.getTime() &&
+        selectedSlot.resourceId === slotInfo.resourceId) {
+      setShowReservationDialog(true);
+    } else {
+      // Si es un slot diferente o no hay selección, lo seleccionamos
+      setSelectedSlot({
+        start: slotInfo.start,
+        end: slotInfo.end,
+        resourceId: slotInfo.resourceId,
+      });
+      setShowReservationDialog(false);
+    }
   };
 
   const handleCreateReservation = () => {
@@ -74,6 +95,31 @@ const DailyView = () => {
     setShowReservationDialog(false);
     setProfesionalName('');
     setFrequency('eventual');
+    setSelectedSlot(null);
+  };
+
+  // Componente personalizado para renderizar las celdas
+  const components = {
+    timeSlotWrapper: (props: any) => {
+      const isSelected = selectedSlot && 
+        props.value.getTime() === selectedSlot.start.getTime() &&
+        props.resource?.id === selectedSlot.resourceId;
+
+      return (
+        <div
+          className={`relative h-full ${
+            isSelected ? 'bg-medical-green/20' : ''
+          }`}
+        >
+          {isSelected && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Plus className="w-6 h-6 text-medical-green" />
+            </div>
+          )}
+          {props.children}
+        </div>
+      );
+    },
   };
 
   return (
@@ -98,6 +144,7 @@ const DailyView = () => {
           min={new Date(2024, 1, 1, 7, 0, 0)}
           max={new Date(2024, 1, 1, 22, 0, 0)}
           defaultDate={new Date()}
+          components={components}
         />
       </div>
 
@@ -142,7 +189,10 @@ const DailyView = () => {
             </p>
 
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowReservationDialog(false)}>
+              <Button variant="outline" onClick={() => {
+                setShowReservationDialog(false);
+                setSelectedSlot(null);
+              }}>
                 Cancelar
               </Button>
               <Button 
