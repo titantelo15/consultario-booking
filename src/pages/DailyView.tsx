@@ -63,15 +63,15 @@ const DailyView = () => {
     
     // Si ya hay un slot seleccionado y es el mismo, abrimos el modal
     if (selectedSlot && 
-        selectedSlot.start.getTime() === slotInfo.start.getTime() &&
-        selectedSlot.end.getTime() === slotInfo.end.getTime() &&
+        selectedSlot.start.getTime() === slotInfo.slots[0].getTime() &&
+        selectedSlot.end.getTime() === slotInfo.slots[1].getTime() &&
         selectedSlot.resourceId === slotInfo.resourceId) {
       setShowReservationDialog(true);
     } else {
       // Si es un slot diferente o no hay selección, lo seleccionamos
       setSelectedSlot({
-        start: slotInfo.start,
-        end: slotInfo.end,
+        start: slotInfo.slots[0],
+        end: slotInfo.slots[1],
         resourceId: slotInfo.resourceId,
       });
       setShowReservationDialog(false);
