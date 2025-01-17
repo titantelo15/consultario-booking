@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import DailyView from "./pages/DailyView";
 import AuthPage from "./pages/AuthPage";
+import ReservationHistory from "./pages/ReservationHistory";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/daily" element={<DailyView />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/history" element={<ReservationHistory />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
