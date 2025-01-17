@@ -57,17 +57,19 @@ const DailyView = () => {
   const handleSelectSlot = (slotInfo: any) => {
     console.log('Selected slot:', slotInfo);
     
+    const newSelectedSlot = {
+      start: slotInfo.slots[0],
+      end: slotInfo.slots[slotInfo.slots.length - 1],
+      resourceId: slotInfo.resourceId,
+    };
+
     if (selectedSlot && 
-        selectedSlot.start.getTime() === slotInfo.slots[0].getTime() &&
-        selectedSlot.end.getTime() === slotInfo.slots[1].getTime() &&
-        selectedSlot.resourceId === slotInfo.resourceId) {
+        selectedSlot.start.getTime() === newSelectedSlot.start.getTime() &&
+        selectedSlot.end.getTime() === newSelectedSlot.end.getTime() &&
+        selectedSlot.resourceId === newSelectedSlot.resourceId) {
       setShowReservationDialog(true);
     } else {
-      setSelectedSlot({
-        start: slotInfo.slots[0],
-        end: slotInfo.slots[1],
-        resourceId: slotInfo.resourceId,
-      });
+      setSelectedSlot(newSelectedSlot);
       setShowReservationDialog(false);
     }
   };
@@ -93,10 +95,10 @@ const DailyView = () => {
   };
 
   const components = {
-    timeSlotWrapper: (props: any) => {
+    timeSlotWrapper: ({ children, value, resource }: any) => {
       const isSelected = selectedSlot && 
-        props.value.getTime() === selectedSlot.start.getTime() &&
-        props.resource?.id === selectedSlot.resourceId;
+        selectedSlot.start.getTime() === value.getTime() &&
+        selectedSlot.resourceId === resource?.id;
 
       return (
         <div
@@ -109,7 +111,7 @@ const DailyView = () => {
               <Plus className="w-6 h-6 text-medical-green" />
             </div>
           )}
-          {props.children}
+          {children}
         </div>
       );
     },
