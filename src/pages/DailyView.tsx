@@ -3,12 +3,8 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Plus } from 'lucide-react';
+import ReservationDialog from '@/components/ReservationDialog';
 
 const locales = {
   'es': es,
@@ -61,14 +57,12 @@ const DailyView = () => {
   const handleSelectSlot = (slotInfo: any) => {
     console.log('Selected slot:', slotInfo);
     
-    // Si ya hay un slot seleccionado y es el mismo, abrimos el modal
     if (selectedSlot && 
         selectedSlot.start.getTime() === slotInfo.slots[0].getTime() &&
         selectedSlot.end.getTime() === slotInfo.slots[1].getTime() &&
         selectedSlot.resourceId === slotInfo.resourceId) {
       setShowReservationDialog(true);
     } else {
-      // Si es un slot diferente o no hay selección, lo seleccionamos
       setSelectedSlot({
         start: slotInfo.slots[0],
         end: slotInfo.slots[1],
@@ -98,7 +92,6 @@ const DailyView = () => {
     setSelectedSlot(null);
   };
 
-  // Componente personalizado para renderizar las celdas
   const components = {
     timeSlotWrapper: (props: any) => {
       const isSelected = selectedSlot && 
@@ -148,63 +141,16 @@ const DailyView = () => {
         />
       </div>
 
-      <Dialog open={showReservationDialog} onOpenChange={setShowReservationDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nueva Reserva</DialogTitle>
-          </DialogHeader>
-          <div className="p-4 space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="profesionalName">Nombre del Profesional</Label>
-              <Input
-                id="profesionalName"
-                value={profesionalName}
-                onChange={(e) => setProfesionalName(e.target.value)}
-                placeholder="Ingrese el nombre del profesional"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Frecuencia de la Reserva</Label>
-              <RadioGroup value={frequency} onValueChange={(value: 'eventual' | 'quincenal' | 'semanal') => setFrequency(value)}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="eventual" id="eventual" />
-                  <Label htmlFor="eventual">Eventual</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="quincenal" id="quincenal" />
-                  <Label htmlFor="quincenal">Quincenal</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="semanal" id="semanal" />
-                  <Label htmlFor="semanal">Semanal</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <p className="text-sm text-gray-600">
-              Consultorio {selectedSlot?.resourceId} - Horario:{' '}
-              {selectedSlot?.start && format(selectedSlot.start, 'HH:mm')} hasta{' '}
-              {selectedSlot?.end && format(selectedSlot.end, 'HH:mm')}
-            </p>
-
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => {
-                setShowReservationDialog(false);
-                setSelectedSlot(null);
-              }}>
-                Cancelar
-              </Button>
-              <Button 
-                onClick={handleCreateReservation}
-                disabled={!profesionalName}
-              >
-                Confirmar Reserva
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ReservationDialog
+        open={showReservationDialog}
+        onOpenChange={setShowReservationDialog}
+        selectedSlot={selectedSlot}
+        profesionalName={profesionalName}
+        setProfesionalName={setProfesionalName}
+        frequency={frequency}
+        setFrequency={setFrequency}
+        onConfirm={handleCreateReservation}
+      />
     </div>
   );
 };
