@@ -79,7 +79,7 @@
 
 /* Estilos para React Big Calendar */
 .rbc-calendar {
-  @apply font-['Inter'] rounded-lg shadow-lg bg-white p-4;
+  @apply font-['Inter'] rounded-lg shadow-lg bg-white dark:bg-gray-800 p-4;
 }
 
 .rbc-toolbar {
@@ -87,7 +87,7 @@
 }
 
 .rbc-toolbar button {
-  @apply bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors;
+  @apply bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors;
 }
 
 .rbc-toolbar button.rbc-active {
@@ -95,7 +95,7 @@
 }
 
 .rbc-header {
-  @apply py-2 font-semibold text-gray-700;
+  @apply py-2 font-semibold text-gray-700 dark:text-gray-200;
 }
 
 .rbc-event {
@@ -103,9 +103,53 @@
 }
 
 .rbc-today {
-  @apply bg-blue-50;
+  @apply bg-blue-50 dark:bg-blue-900/20;
 }
 
 .rbc-off-range-bg {
-  @apply bg-gray-50;
+  @apply bg-gray-50 dark:bg-gray-700/50;
+}
+
+.rbc-time-content {
+  @apply dark:border-gray-700;
+}
+
+.rbc-time-header {
+  @apply dark:border-gray-700;
+}
+
+.rbc-time-header-content {
+  @apply dark:border-gray-700;
+}
+
+.rbc-timeslot-group {
+  @apply dark:border-gray-700;
+}
+
+.rbc-time-slot {
+  @apply dark:text-gray-300;
+}
+
+.rbc-time-gutter {
+  @apply dark:text-gray-300;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  @apply dark:border-gray-700;
+}
+
+.rbc-time-view {
+  @apply dark:border-gray-700;
+}
+
+.rbc-current-time-indicator {
+  @apply bg-medical-blue;
+}
+
+.rbc-time-content > * + * > * {
+  @apply dark:border-gray-700;
+}
+
+.rbc-day-bg + .rbc-day-bg {
+  @apply dark:border-gray-700;
 }
