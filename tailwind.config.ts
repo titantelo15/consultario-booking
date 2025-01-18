@@ -19,8 +19,7 @@ export default {
     },
     extend: {
       colors: {
-        // Colores personalizados para la aplicación
-        "medical-blue": "#2C4ECF",
+        "medical-blue": "#03a696",
         "medical-green": "#4ADE80",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -28,8 +27,9 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#03a696",
+          light: "rgb(53, 183, 171)",
+          dark: "rgb(2, 116, 105)",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
