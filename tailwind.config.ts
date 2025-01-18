@@ -32,8 +32,10 @@ export default {
           dark: "rgb(2, 116, 105)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#f2884b",
+          light: "rgb(244, 159, 111)",
+          dark: "rgb(169, 95, 52)",
+          foreground: "rgba(0, 0, 0, 0.87)",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
