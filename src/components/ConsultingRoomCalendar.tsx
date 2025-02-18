@@ -1,4 +1,3 @@
-
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -16,7 +15,7 @@ const locales = {
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }), // Comenzar semana en lunes
+  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
   getDay,
   locales,
 });
@@ -30,7 +29,7 @@ const messages = {
   next: 'Siguiente',
   today: 'Hoy',
   agenda: 'Agenda',
-  showMore: (total) => `+${total} más`,
+  showMore: (total) => `+${total} más',
   noEventsInRange: 'No hay eventos en este rango',
 };
 
@@ -146,10 +145,9 @@ const ConsultingRoomCalendar = () => {
               const isSelected = tempSelectedSlot && props.value.getTime() === tempSelectedSlot.getTime();
               return (
                 <div className={"relative " + (props.className || "")}>
-                  <div className={isSelected ? "absolute inset-0 bg-medical-green/20" : ""} />
                   {props.children}
                   {isSelected && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 flex items-center justify-center bg-medical-green/20 pointer-events-none">
                       <Plus className="w-6 h-6 text-white" />
                     </div>
                   )}
