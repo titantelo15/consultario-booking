@@ -1,3 +1,4 @@
+
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -14,10 +15,23 @@ const locales = {
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek,
+  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }), // Comenzar semana en lunes
   getDay,
   locales,
 });
+
+const messages = {
+  week: 'Semana',
+  work_week: 'Semana laboral',
+  day: 'Día',
+  month: 'Mes',
+  previous: 'Anterior',
+  next: 'Siguiente',
+  today: 'Hoy',
+  agenda: 'Agenda',
+  showMore: total => `+${total} más`,
+  noEventsInRange: 'No hay eventos en este rango',
+};
 
 export interface Reservation {
   id: string;
@@ -98,12 +112,18 @@ const ConsultingRoomCalendar = () => {
           localizer={localizer}
           events={filteredReservations}
           step={60}
-          views={['day', 'work_week']}
-          defaultView={Views.WORK_WEEK}
+          timeslots={1}
+          views={['week']}
+          defaultView={Views.WEEK}
           selectable
           onSelectSlot={handleSelectSlot}
-          min={new Date(2024, 1, 1, 8, 0, 0)}
-          max={new Date(2024, 1, 1, 20, 0, 0)}
+          min={new Date(2024, 1, 1, 7, 0, 0)}
+          max={new Date(2024, 1, 1, 23, 0, 0)}
+          messages={messages}
+          formats={{
+            timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: es }),
+            dayHeaderFormat: (date: Date) => format(date, 'EEEE dd/MM', { locale: es }),
+          }}
           className="rounded-lg shadow-lg bg-white"
         />
       </div>
@@ -116,8 +136,8 @@ const ConsultingRoomCalendar = () => {
           <div className="p-4">
             <p className="mb-4">
               ¿Desea reservar el consultorio {selectedSlot?.resourceId} desde{' '}
-              {selectedSlot?.start && format(selectedSlot.start, 'HH:mm')} hasta{' '}
-              {selectedSlot?.end && format(selectedSlot.end, 'HH:mm')}?
+              {selectedSlot?.start && format(selectedSlot.start, 'HH:mm', { locale: es })} hasta{' '}
+              {selectedSlot?.end && format(selectedSlot.end, 'HH:mm', { locale: es })}?
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowReservationDialog(false)}>
