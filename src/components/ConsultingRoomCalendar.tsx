@@ -1,4 +1,3 @@
-
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -7,6 +6,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 
 const locales = {
   'es': es,
@@ -29,7 +29,7 @@ const messages = {
   next: 'Siguiente',
   today: 'Hoy',
   agenda: 'Agenda',
-  showMore: total => `+${total} más`,
+  showMore: total => `+${total} más',
   noEventsInRange: 'No hay eventos en este rango',
 };
 
@@ -63,9 +63,12 @@ const ConsultingRoomCalendar = () => {
   const [tempSelectedSlot, setTempSelectedSlot] = useState<Date | null>(null);
 
   const handleSelectSlot = (slotInfo: any) => {
-    setSelectedSlot(slotInfo);
-    setTempSelectedSlot(slotInfo.start);
-    setShowReservationDialog(true);
+    if (tempSelectedSlot && tempSelectedSlot.getTime() === slotInfo.start.getTime()) {
+      setSelectedSlot(slotInfo);
+      setShowReservationDialog(true);
+    } else {
+      setTempSelectedSlot(slotInfo.start);
+    }
   };
 
   const handleCreateReservation = () => {
@@ -127,10 +130,25 @@ const ConsultingRoomCalendar = () => {
             timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: es }),
             dayHeaderFormat: (date: Date) => format(date, 'EEEE dd/MM', { locale: es }),
           }}
-          className="rounded-lg shadow-lg bg-white [&_.rbc-time-slot.selected]:bg-medical-green/20"
+          className="rounded-lg shadow-lg bg-white [&_.rbc-time-slot.selected]:bg-medical-green/20 relative"
           slotPropGetter={(date) => ({
             className: tempSelectedSlot && date.getTime() === tempSelectedSlot.getTime() ? 'selected' : '',
           })}
+          components={{
+            timeSlotWrapper: (props) => {
+              const isSelected = tempSelectedSlot && props.value.getTime() === tempSelectedSlot.getTime();
+              return (
+                <div className={`relative ${props.className}`}>
+                  {props.children}
+                  {isSelected && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <Plus className="w-6 h-6 text-medical-green" />
+                    </div>
+                  )}
+                </div>
+              );
+            }
+          }}
         />
       </div>
 
