@@ -60,9 +60,11 @@ const ConsultingRoomCalendar = () => {
   const [showReservationDialog, setShowReservationDialog] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [tempSelectedSlot, setTempSelectedSlot] = useState<Date | null>(null);
 
   const handleSelectSlot = (slotInfo: any) => {
     setSelectedSlot(slotInfo);
+    setTempSelectedSlot(slotInfo.start);
     setShowReservationDialog(true);
   };
 
@@ -80,6 +82,7 @@ const ConsultingRoomCalendar = () => {
 
     setReservations([...reservations, newReservation]);
     setShowReservationDialog(false);
+    setTempSelectedSlot(null);
   };
 
   const filteredReservations = selectedRoom && selectedRoom !== 'all'
@@ -124,11 +127,20 @@ const ConsultingRoomCalendar = () => {
             timeGutterFormat: (date: Date) => format(date, 'HH:mm', { locale: es }),
             dayHeaderFormat: (date: Date) => format(date, 'EEEE dd/MM', { locale: es }),
           }}
-          className="rounded-lg shadow-lg bg-white"
+          className="rounded-lg shadow-lg bg-white [&_.rbc-time-slot.selected]:bg-medical-green/20"
+          slotPropGetter={(date) => ({
+            className: tempSelectedSlot && date.getTime() === tempSelectedSlot.getTime() ? 'selected' : '',
+          })}
         />
       </div>
 
-      <Dialog open={showReservationDialog} onOpenChange={setShowReservationDialog}>
+      <Dialog 
+        open={showReservationDialog} 
+        onOpenChange={(open) => {
+          setShowReservationDialog(open);
+          if (!open) setTempSelectedSlot(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nueva Reserva</DialogTitle>
@@ -140,7 +152,10 @@ const ConsultingRoomCalendar = () => {
               {selectedSlot?.end && format(selectedSlot.end, 'HH:mm', { locale: es })}?
             </p>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowReservationDialog(false)}>
+              <Button variant="outline" onClick={() => {
+                setShowReservationDialog(false);
+                setTempSelectedSlot(null);
+              }}>
                 Cancelar
               </Button>
               <Button onClick={handleCreateReservation}>
