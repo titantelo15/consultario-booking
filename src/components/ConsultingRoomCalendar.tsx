@@ -48,6 +48,12 @@ export interface ConsultingRoom {
   title: string;
 }
 
+interface TimeSlotWrapperProps {
+  value: Date;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 const consultingRooms: ConsultingRoom[] = [
   { id: 1, title: 'Consultorio 1' },
   { id: 2, title: 'Consultorio 2' },
@@ -136,14 +142,15 @@ const ConsultingRoomCalendar = () => {
             className: tempSelectedSlot && date.getTime() === tempSelectedSlot.getTime() ? 'selected' : '',
           })}
           components={{
-            timeSlotWrapper: (props) => {
+            timeSlotWrapper: (props: TimeSlotWrapperProps) => {
               const isSelected = tempSelectedSlot && props.value.getTime() === tempSelectedSlot.getTime();
               return (
-                <div className={"relative " + props.className}>
+                <div className={"relative " + (props.className || "")}>
+                  <div className={isSelected ? "absolute inset-0 bg-medical-green/20" : ""} />
                   {props.children}
                   {isSelected && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <Plus className="w-6 h-6 text-medical-green" />
+                      <Plus className="w-6 h-6 text-white" />
                     </div>
                   )}
                 </div>
