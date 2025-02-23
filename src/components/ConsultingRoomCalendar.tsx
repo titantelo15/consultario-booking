@@ -1,3 +1,4 @@
+
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -29,7 +30,7 @@ const messages = {
   next: 'Siguiente',
   today: 'Hoy',
   agenda: 'Agenda',
-  showMore: (total) => `+${total} más',
+  showMore: (total) => `+${total} más`,
   noEventsInRange: 'No hay eventos en este rango',
 };
 
